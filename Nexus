@@ -6,206 +6,155 @@
 <meta name="theme-color" content="#0f0c29"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <title>Nexus 🌐</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPA_URL = 'https://cplrkdnfkfrhrkoxstrh.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwbHJrZG5ma2ZyaHJrb3hzdHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTQ4NDksImV4cCI6MjA5MTU5MDg0OX0.FdMhRUXtEueL6GhNrHwX_eNy8NKHubq_Xl2gCp6ud7w';
+  const db = supabase.createClient(SUPA_URL, SUPA_KEY);
+</script>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  body{background:#0f0c29;font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#fff;direction:rtl;min-height:100vh;}
-  input,textarea,button{font-family:inherit;direction:rtl;}
-  ::-webkit-scrollbar{width:4px;height:4px;}
-  ::-webkit-scrollbar-track{background:transparent;}
-  ::-webkit-scrollbar-thumb{background:rgba(108,99,255,0.4);border-radius:4px;}
-  .page{display:none;} .page.active{display:block;}
-  .tab-content{display:none;} .tab-content.active{display:block;}
-  .app-wrap{max-width:480px;margin:0 auto;min-height:100vh;position:relative;}
-
-  /* LOGIN */
-  #login-page{min-height:100vh;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);display:flex;align-items:center;justify-content:center;}
-  .login-box{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:40px;width:340px;box-shadow:0 25px 50px rgba(0,0,0,0.5);}
-  .brand-logo{text-align:center;margin-bottom:32px;}
-  .brand-logo .icon{font-size:48px;display:block;margin-bottom:8px;}
-  .brand-logo h1{font-size:32px;font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#6C63FF,#FF6584);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-  .brand-logo p{color:rgba(255,255,255,0.5);font-size:14px;margin-top:4px;}
-  .tab-switch{display:flex;background:rgba(255,255,255,0.07);border-radius:12px;padding:4px;margin-bottom:24px;}
-  .tab-switch button{flex:1;padding:10px 0;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;transition:all 0.3s;background:transparent;color:#fff;}
-  .tab-switch button.active{background:rgba(108,99,255,0.8);}
-  .field{padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-size:15px;outline:none;width:100%;margin-bottom:14px;}
-  .field::placeholder{color:rgba(255,255,255,0.4);}
-  .btn-main{width:100%;padding:14px;border-radius:12px;border:none;color:#fff;font-weight:800;font-size:16px;cursor:pointer;transition:opacity 0.2s;}
-  .btn-login{background:linear-gradient(135deg,#6C63FF,#9B59B6);}
-  .btn-register{background:linear-gradient(135deg,#43C6AC,#191654);}
-  .form-section{display:none;} .form-section.active{display:block;}
-
-  /* APP */
-  #app-page{display:none;}
-  #app-page.active{display:block;}
-
-  /* HEADER */
-  .header{position:sticky;top:0;background:rgba(15,12,41,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.08);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;z-index:50;}
-  .header-brand{font-size:22px;font-weight:800;background:linear-gradient(135deg,#6C63FF,#FF6584);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-  .header-right{display:flex;align-items:center;gap:10px;}
-  .search-input{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:8px 14px;color:#fff;outline:none;width:120px;font-size:13px;}
-  .search-input::placeholder{color:rgba(255,255,255,0.4);}
-  .btn-post{background:linear-gradient(135deg,#6C63FF,#9B59B6);border:none;border-radius:20px;padding:8px 14px;color:#fff;font-weight:700;cursor:pointer;font-size:13px;}
-
-  /* NAVBAR */
-  .navbar{position:fixed;bottom:0;left:0;right:0;background:rgba(15,12,41,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-around;padding:10px 0 16px;z-index:100;max-width:480px;margin:0 auto;}
-  .nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 12px;position:relative;}
-  .nav-icon{font-size:22px;transition:all 0.3s;filter:grayscale(80%);}
-  .nav-btn.active .nav-icon{filter:none;transform:scale(1.15);}
-  .nav-label{font-size:10px;color:rgba(255,255,255,0.4);transition:color 0.3s;}
-  .nav-btn.active .nav-label{color:#6C63FF;font-weight:700;}
-  .notif-badge{position:absolute;top:-2px;right:6px;background:#FF4757;color:#fff;font-size:10px;font-weight:800;padding:2px 5px;border-radius:10px;}
-
-  /* CONTENT */
-  .content{padding-bottom:80px;}
-
-  /* STORIES */
-  .stories-wrap{display:flex;gap:12px;padding:16px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  .story-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;}
-  .story-ring{width:60px;height:60px;border-radius:50%;padding:2px;background:linear-gradient(135deg,#6C63FF,#FF6584);}
-  .story-ring.seen{background:rgba(255,255,255,0.15);}
-  .story-avatar{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;border:2px solid #0f0c29;}
-  .story-add{width:60px;height:60px;border-radius:50%;background:rgba(108,99,255,0.2);border:2px dashed rgba(108,99,255,0.6);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;}
-  .story-name{color:rgba(255,255,255,0.6);font-size:11px;text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-
-  /* SUGGESTIONS */
-  .suggest-wrap{padding:8px 16px 12px;}
-  .suggest-title{color:rgba(255,255,255,0.4);font-size:12px;margin-bottom:10px;}
-  .suggest-list{display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  .suggest-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;min-width:130px;}
-  .suggest-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;}
-  .suggest-name{color:#fff;font-size:13px;font-weight:600;text-align:center;}
-  .suggest-followers{color:rgba(255,255,255,0.4);font-size:11px;}
-  .btn-follow{background:linear-gradient(135deg,#6C63FF,#9B59B6);border:none;border-radius:20px;padding:6px 16px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;}
-  .btn-following{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:6px 16px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;}
-
-  /* POSTS */
-  .posts-list{padding:0 16px;}
-  .post-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;margin-bottom:16px;}
-  .post-header{padding:16px 16px 12px;display:flex;align-items:center;gap:12px;}
-  .post-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;flex-shrink:0;}
-  .post-user-info{flex:1;}
-  .post-username{color:#fff;font-weight:700;font-size:15px;}
-  .post-handle{color:rgba(255,255,255,0.4);font-size:12px;}
-  .post-media{background:linear-gradient(135deg,#1a1a2e,#16213e);margin:0 16px;border-radius:16px;height:175px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;position:relative;}
-  .post-play{width:56px;height:56px;background:rgba(108,99,255,0.8);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;}
-  .post-media-label{color:rgba(255,255,255,0.7);font-size:13px;}
-  .post-views{position:absolute;bottom:10px;right:14px;color:rgba(255,255,255,0.5);font-size:12px;}
-  .post-image{background:linear-gradient(135deg,#f7971e,#ffd200);margin:0 16px;border-radius:16px;height:175px;display:flex;align-items:center;justify-content:center;font-size:56px;}
-  .post-text{padding:12px 16px 8px;color:rgba(255,255,255,0.85);font-size:15px;line-height:1.6;}
-  .post-actions{padding:8px 16px 16px;display:flex;gap:24px;}
-  .action-btn{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.5);font-size:14px;font-weight:600;font-family:inherit;}
-  .action-icon{font-size:18px;}
-
-  /* REELS TAB */
-  .reels-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 16px;}
-  .reel-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;cursor:pointer;}
-  .reel-thumb{height:160px;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;}
-  .reel-info{padding:10px;}
-  .reel-title{color:rgba(255,255,255,0.8);font-size:12px;margin-bottom:6px;line-height:1.4;}
-  .reel-meta{color:rgba(255,255,255,0.4);font-size:11px;margin-top:4px;}
-
-  /* MESSAGES */
-  .msg-list{padding:0 16px 80px;}
-  .msg-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;}
-  .msg-avatar-wrap{position:relative;}
-  .msg-avatar{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;}
-  .online-dot{position:absolute;bottom:2px;right:2px;width:12px;height:12px;background:#43C6AC;border-radius:50%;border:2px solid #0f0c29;}
-  .msg-info{flex:1;}
-  .msg-name-row{display:flex;justify-content:space-between;margin-bottom:2px;}
-  .msg-name{color:#fff;font-weight:700;}
-  .msg-time{color:rgba(255,255,255,0.3);font-size:12px;}
-  .msg-preview{color:rgba(255,255,255,0.45);font-size:13px;}
-
-  /* CHAT */
-  #chat-view{display:none;flex-direction:column;height:calc(100vh - 0px);}
-  #chat-view.open{display:flex;}
-  .chat-header{padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.08);}
-  .back-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;}
-  .chat-online{color:#43C6AC;font-size:12px;}
-  .chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
-  .bubble-wrap-me{display:flex;justify-content:flex-start;}
-  .bubble-wrap-them{display:flex;justify-content:flex-end;}
-  .bubble{border-radius:18px;padding:10px 14px;max-width:70%;}
-  .bubble-me{background:linear-gradient(135deg,#6C63FF,#9B59B6);border-radius:18px 18px 4px 18px;}
-  .bubble-them{background:rgba(255,255,255,0.08);border-radius:18px 18px 18px 4px;}
-  .bubble-text{color:#fff;font-size:14px;}
-  .bubble-time{color:rgba(255,255,255,0.4);font-size:11px;margin-top:4px;}
-  .chat-input-wrap{padding:16px;display:flex;gap:12px;border-top:1px solid rgba(255,255,255,0.08);}
-  .chat-field{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:12px 16px;color:#fff;outline:none;font-size:14px;font-family:inherit;}
-  .chat-field::placeholder{color:rgba(255,255,255,0.4);}
-  .send-btn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#6C63FF,#9B59B6);border:none;cursor:pointer;font-size:18px;flex-shrink:0;}
-  .typing-bubble{background:rgba(255,255,255,0.08);border-radius:18px;padding:10px 16px;color:rgba(255,255,255,0.5);font-size:14px;align-self:flex-end;}
-
-  /* NOTIFICATIONS */
-  .notif-list{padding:0 16px 80px;}
-  .notif-item{display:flex;align-items:center;gap:14px;padding:14px 12px;margin-bottom:8px;border-radius:16px;border:1px solid rgba(255,255,255,0.05);}
-  .notif-item.unread{background:rgba(108,99,255,0.1);border-color:rgba(108,99,255,0.25);}
-  .notif-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0;}
-  .notif-text{flex:1;}
-  .notif-name{color:#fff;font-weight:700;}
-  .notif-action{color:rgba(255,255,255,0.7);}
-  .notif-time{color:rgba(255,255,255,0.35);font-size:12px;margin-top:4px;}
-  .unread-dot{width:8px;height:8px;border-radius:50%;background:#6C63FF;flex-shrink:0;}
-
-  /* PROFILE */
-  .profile-header{background:linear-gradient(135deg,#302b63,#24243e);padding:32px 24px 24px;position:relative;}
-  .logout-btn{position:absolute;top:16px;left:16px;background:rgba(255,255,255,0.1);border:none;border-radius:10px;padding:8px 12px;color:#fff;cursor:pointer;font-size:12px;font-family:inherit;}
-  .profile-top{display:flex;align-items:flex-end;gap:16px;margin-bottom:16px;}
-  .profile-big-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#6C63FF,#FF6584);display:flex;align-items:center;justify-content:center;color:#fff;font-size:30px;font-weight:800;border:3px solid rgba(255,255,255,0.2);}
-  .profile-name{color:#fff;font-size:22px;font-weight:800;}
-  .profile-handle{color:rgba(255,255,255,0.5);font-size:14px;}
-  .profile-bio{color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:16px;}
-  .profile-stats{display:flex;gap:24px;margin-bottom:16px;}
-  .stat{text-align:center;}
-  .stat-num{color:#fff;font-weight:800;font-size:18px;}
-  .stat-label{color:rgba(255,255,255,0.5);font-size:12px;}
-  .btn-edit{padding:10px 24px;border-radius:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-weight:700;cursor:pointer;font-family:inherit;font-size:14px;}
-  .edit-fields{display:flex;flex-direction:column;gap:10px;}
-  .edit-field{padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;outline:none;font-size:14px;font-family:inherit;}
-  .edit-field::placeholder{color:rgba(255,255,255,0.4);}
-  .edit-actions{display:flex;gap:10px;}
-  .btn-save{flex:1;padding:10px;border-radius:10px;background:linear-gradient(135deg,#6C63FF,#9B59B6);border:none;color:#fff;font-weight:700;cursor:pointer;font-family:inherit;}
-  .btn-cancel{padding:10px 16px;border-radius:10px;background:rgba(255,255,255,0.1);border:none;color:#fff;cursor:pointer;font-family:inherit;}
-  .my-posts-section{padding:16px;}
-  .my-posts-title{color:#fff;margin-bottom:12px;font-size:16px;}
-  .empty-posts{text-align:center;color:rgba(255,255,255,0.4);padding:40px;}
-  .btn-post-now{margin-top:16px;background:linear-gradient(135deg,#6C63FF,#9B59B6);border:none;border-radius:20px;padding:10px 24px;color:#fff;cursor:pointer;font-weight:700;font-family:inherit;}
-
-  /* POST MODAL */
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:flex-end;z-index:200;}
-  .modal-overlay.open{display:flex;}
-  .modal-box{background:#1a1730;border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:480px;margin:0 auto;}
-  .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-  .modal-title{color:#fff;font-size:18px;font-weight:700;}
-  .modal-close{background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:32px;height:32px;color:#fff;cursor:pointer;font-size:16px;}
-  .post-types{display:flex;gap:8px;margin-bottom:16px;}
-  .type-btn{flex:1;padding:8px 4px;border-radius:10px;border:none;background:rgba(255,255,255,0.07);color:#fff;cursor:pointer;font-size:12px;font-family:inherit;}
-  .type-btn.active{background:rgba(108,99,255,0.7);font-weight:700;}
-  .modal-body{display:flex;gap:12px;margin-bottom:16px;}
-  .modal-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;flex-shrink:0;}
-  .post-textarea{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:14px;color:#fff;resize:none;outline:none;font-size:14px;line-height:1.6;font-family:inherit;height:100px;}
-  .post-textarea::placeholder{color:rgba(255,255,255,0.4);}
-  .btn-publish{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#6C63FF,#9B59B6);color:#fff;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit;}
-  .btn-publish:disabled{background:rgba(108,99,255,0.4);cursor:not-allowed;}
-
-  /* STORY VIEWER */
-  .story-viewer{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:24px;}
-  .story-viewer.open{display:flex;}
-  .story-close-hint{color:rgba(255,255,255,0.5);font-size:14px;}
-  .story-card{width:80%;max-width:320px;height:500px;border-radius:20px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
-
-  /* TAB SECTION HEADERS */
-  .section-title{color:#fff;font-size:22px;font-weight:800;margin-bottom:16px;padding:16px 16px 0;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:#0f0c29;font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#fff;direction:rtl;min-height:100vh;}
+input,textarea,button{font-family:inherit;direction:rtl;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:rgba(108,99,255,0.4);border-radius:4px;}
+.page{display:none;}.page.active{display:block;}
+.tab-content{display:none;}.tab-content.active{display:block;}
+.app-wrap{max-width:480px;margin:0 auto;min-height:100vh;position:relative;}
+#loading-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0f0c29,#302b63);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;}
+.spinner{width:40px;height:40px;border:3px solid rgba(108,99,255,0.3);border-top-color:#6C63FF;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+#login-page{min-height:100vh;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-box{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:40px;width:340px;box-shadow:0 25px 50px rgba(0,0,0,0.5);}
+.brand-logo{text-align:center;margin-bottom:32px;}
+.brand-logo h1{font-size:32px;font-weight:800;background:linear-gradient(135deg,#6C63FF,#FF6584);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.brand-logo p{color:rgba(255,255,255,0.5);font-size:14px;margin-top:4px;}
+.tab-switch{display:flex;background:rgba(255,255,255,0.07);border-radius:12px;padding:4px;margin-bottom:24px;}
+.tab-switch button{flex:1;padding:10px 0;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;transition:all 0.3s;background:transparent;color:#fff;}
+.tab-switch button.active{background:rgba(108,99,255,0.8);}
+.field{padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-size:15px;outline:none;width:100%;margin-bottom:14px;}
+.field::placeholder{color:rgba(255,255,255,0.4);}
+.btn-main{width:100%;padding:14px;border-radius:12px;border:none;color:#fff;font-weight:800;font-size:16px;cursor:pointer;}
+.btn-login{background:linear-gradient(135deg,#6C63FF,#9B59B6);}
+.btn-register{background:linear-gradient(135deg,#43C6AC,#191654);}
+.form-section{display:none;}.form-section.active{display:block;}
+.msg-box{padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;display:none;}
+.msg-err{background:rgba(255,71,87,0.15);border:1px solid rgba(255,71,87,0.4);color:#FF4757;}
+.msg-ok{background:rgba(67,198,172,0.15);border:1px solid rgba(67,198,172,0.4);color:#43C6AC;}
+#app-page{display:none;}#app-page.active{display:block;}
+.header{position:sticky;top:0;background:rgba(15,12,41,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.08);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;z-index:50;}
+.header-brand{font-size:22px;font-weight:800;background:linear-gradient(135deg,#6C63FF,#FF6584);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.search-input{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:8px 14px;color:#fff;outline:none;width:120px;font-size:13px;}
+.search-input::placeholder{color:rgba(255,255,255,0.4);}
+.btn-post{background:linear-gradient(135deg,#6C63FF,#9B59B6);border:none;border-radius:20px;padding:8px 14px;color:#fff;font-weight:700;cursor:pointer;font-size:13px;}
+.navbar{position:fixed;bottom:0;left:0;right:0;background:rgba(15,12,41,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-around;padding:10px 0 16px;z-index:100;max-width:480px;margin:0 auto;}
+.nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 12px;position:relative;}
+.nav-icon{font-size:22px;transition:all 0.3s;filter:grayscale(80%);}
+.nav-btn.active .nav-icon{filter:none;transform:scale(1.15);}
+.nav-label{font-size:10px;color:rgba(255,255,255,0.4);}
+.nav-btn.active .nav-label{color:#6C63FF;font-weight:700;}
+.nbadge{position:absolute;top:-2px;right:6px;background:#FF4757;color:#fff;font-size:10px;font-weight:800;padding:2px 5px;border-radius:10px;display:none;}
+.content{padding-bottom:80px;}
+.sec-title{color:#fff;font-size:20px;font-weight:800;padding:16px 16px 8px;}
+/* STORIES */
+.stories-wrap{display:flex;gap:12px;padding:12px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.story-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;}
+.story-ring{width:58px;height:58px;border-radius:50%;padding:2px;background:linear-gradient(135deg,#6C63FF,#FF6584);}
+.s-inner{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;border:2px solid #0f0c29;}
+.story-add{width:58px;height:58px;border-radius:50%;background:rgba(108,99,255,0.2);border:2px dashed rgba(108,99,255,0.6);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;}
+.sname{color:rgba(255,255,255,0.6);font-size:11px;text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* SUGGEST */
+.suggest-wrap{padding:4px 16px 12px;}
+.suggest-title{color:rgba(255,255,255,0.4);font-size:12px;margin-bottom:10px;}
+.suggest-list{display:flex;gap:12px;overflow-x:auto;}
+.sc{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;min-width:120px;}
+.sav{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;}
+.btn-follow{background:linear-gradient(135deg,#6C63FF,#9B59B6);border:none;border-radius:20px;padding:6px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;}
+.btn-fing{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:6px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;}
+/* POSTS */
+.posts-list{padding:0 16px;}
+.post-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;margin-bottom:16px;}
+.ph{padding:14px 14px 10px;display:flex;align-items:center;gap:10px;}
+.pav{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;flex-shrink:0;}
+.pui{flex:1;}
+.pun{color:#fff;font-weight:700;font-size:14px;}
+.phd{color:rgba(255,255,255,0.4);font-size:12px;}
+.pm{background:linear-gradient(135deg,#1a1a2e,#16213e);margin:0 14px;border-radius:14px;height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;position:relative;}
+.pplay{width:52px;height:52px;background:rgba(108,99,255,0.8);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.pvw{position:absolute;bottom:8px;right:12px;color:rgba(255,255,255,0.5);font-size:11px;}
+.pimg{background:linear-gradient(135deg,#f7971e,#ffd200);margin:0 14px;border-radius:14px;height:170px;display:flex;align-items:center;justify-content:center;font-size:52px;}
+.pt{padding:10px 14px 6px;color:rgba(255,255,255,0.85);font-size:14px;line-height:1.6;}
+.pa{padding:6px 14px 14px;display:flex;gap:20px;}
+.abt{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;font-family:inherit;}
+/* REELS */
+.reels-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 16px;}
+.rc{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;cursor:pointer;}
+.rt{height:150px;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;}
+.ri{padding:10px;}
+/* MESSAGES */
+.msg-list{padding:0 16px 80px;}
+.mi{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;}
+.maw{position:relative;}
+.mav{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;}
+.odot{position:absolute;bottom:2px;right:2px;width:11px;height:11px;background:#43C6AC;border-radius:50%;border:2px solid #0f0c29;}
+#chat-view{display:none;flex-direction:column;height:calc(100vh - 60px);}
+#chat-view.open{display:flex;}
+.ch{padding:14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.bk{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;}
+.cm{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
+.bwm{display:flex;justify-content:flex-start;}
+.bwt{display:flex;justify-content:flex-end;}
+.bbl{border-radius:18px;padding:10px 14px;max-width:72%;}
+.bme{background:linear-gradient(135deg,#6C63FF,#9B59B6);border-radius:18px 18px 4px 18px;}
+.bth{background:rgba(255,255,255,0.08);border-radius:18px 18px 18px 4px;}
+.ciw{padding:14px;display:flex;gap:10px;border-top:1px solid rgba(255,255,255,0.08);}
+.cf{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:11px 16px;color:#fff;outline:none;font-size:14px;font-family:inherit;}
+.cf::placeholder{color:rgba(255,255,255,0.4);}
+.sbtn{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#6C63FF,#9B59B6);border:none;cursor:pointer;font-size:17px;flex-shrink:0;}
+/* NOTIFS */
+.notif-list{padding:0 16px 80px;}
+.ni{display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:8px;border-radius:14px;border:1px solid rgba(255,255,255,0.05);}
+.ni.unr{background:rgba(108,99,255,0.1);border-color:rgba(108,99,255,0.25);}
+.nav2{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;flex-shrink:0;}
+.udot{width:8px;height:8px;border-radius:50%;background:#6C63FF;flex-shrink:0;}
+/* PROFILE */
+.prof-hdr{background:linear-gradient(135deg,#302b63,#24243e);padding:28px 20px 20px;position:relative;}
+.lout{position:absolute;top:14px;left:14px;background:rgba(255,255,255,0.1);border:none;border-radius:10px;padding:7px 12px;color:#fff;cursor:pointer;font-size:12px;font-family:inherit;}
+.pbav{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:800;border:3px solid rgba(255,255,255,0.2);}
+.ef{padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;outline:none;font-size:14px;font-family:inherit;width:100%;margin-bottom:10px;}
+.ef::placeholder{color:rgba(255,255,255,0.4);}
+/* POST MODAL */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:flex-end;z-index:200;}
+.ov.open{display:flex;}
+.mb{background:#1a1730;border-radius:24px 24px 0 0;padding:22px;width:100%;max-width:480px;margin:0 auto;}
+.type-btn{flex:1;padding:8px 4px;border-radius:10px;border:none;background:rgba(255,255,255,0.07);color:#fff;cursor:pointer;font-size:12px;font-family:inherit;}
+.type-btn.active{background:rgba(108,99,255,0.7);font-weight:700;}
+.pta{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:12px;color:#fff;resize:none;outline:none;font-size:14px;line-height:1.6;font-family:inherit;height:95px;}
+.pta::placeholder{color:rgba(255,255,255,0.4);}
+.bpub{width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#6C63FF,#9B59B6);color:#fff;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit;}
+.bpub:disabled{background:rgba(108,99,255,0.4);cursor:not-allowed;}
+/* STORY VIEWER */
+.sv{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;}
+.sv.open{display:flex;}
+.svc{width:80%;max-width:300px;height:480px;border-radius:20px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+.empty{text-align:center;color:rgba(255,255,255,0.4);padding:36px 20px;}
+.btn-pnow{margin-top:14px;background:linear-gradient(135deg,#6C63FF,#9B59B6);border:none;border-radius:20px;padding:10px 22px;color:#fff;cursor:pointer;font-weight:700;font-family:inherit;}
 </style>
 </head>
 <body>
 
-<!-- ════ LOGIN PAGE ════ -->
-<div id="login-page" class="page active">
-  <div style="min-height:100vh;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);display:flex;align-items:center;justify-content:center;">
+<div id="loading-screen">
+  <span style="font-size:48px;">🌐</span>
+  <div class="spinner"></div>
+  <div style="color:rgba(255,255,255,0.5);font-size:14px;">جاري التحميل...</div>
+</div>
+
+<!-- LOGIN -->
+<div id="login-page" class="page">
+  <div style="min-height:100vh;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);display:flex;align-items:center;justify-content:center;padding:20px;">
     <div class="login-box">
       <div class="brand-logo">
-        <span class="icon">🌐</span>
+        <div style="font-size:46px;margin-bottom:6px;">🌐</div>
         <h1>Nexus</h1>
         <p>شبكتك الاجتماعية الشاملة</p>
       </div>
@@ -213,653 +162,378 @@
         <button class="active" onclick="switchAuth('login')">تسجيل الدخول</button>
         <button onclick="switchAuth('register')">إنشاء حساب</button>
       </div>
-      <!-- Login Form -->
+      <div id="auth-err" class="msg-box msg-err"></div>
+      <div id="auth-ok"  class="msg-box msg-ok"></div>
       <div id="form-login" class="form-section active">
-        <input id="login-username" class="field" type="text" placeholder="اسم المستخدم"/>
-        <input id="login-password" class="field" type="password" placeholder="كلمة المرور"/>
+        <input id="l-email"    class="field" type="email"    placeholder="البريد الإلكتروني"/>
+        <input id="l-pass"     class="field" type="password" placeholder="كلمة المرور"/>
         <button class="btn-main btn-login" onclick="handleLogin()">دخول 🚀</button>
       </div>
-      <!-- Register Form -->
       <div id="form-register" class="form-section">
-        <input id="reg-name" class="field" type="text" placeholder="الاسم الكامل"/>
-        <input id="reg-username" class="field" type="text" placeholder="اسم المستخدم"/>
-        <input id="reg-password" class="field" type="password" placeholder="كلمة المرور"/>
+        <input id="r-name"     class="field" type="text"     placeholder="الاسم الكامل"/>
+        <input id="r-username" class="field" type="text"     placeholder="اسم المستخدم"/>
+        <input id="r-email"    class="field" type="email"    placeholder="البريد الإلكتروني"/>
+        <input id="r-pass"     class="field" type="password" placeholder="كلمة المرور (6+ أحرف)"/>
         <button class="btn-main btn-register" onclick="handleRegister()">إنشاء حساب ✨</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ════ APP PAGE ════ -->
+<!-- APP -->
 <div id="app-page" class="page">
   <div class="app-wrap">
-
-    <!-- HEADER -->
     <div class="header">
       <div class="header-brand">🌐 Nexus</div>
-      <div class="header-right">
+      <div style="display:flex;align-items:center;gap:10px;">
         <input class="search-input" type="text" placeholder="ابحث..."/>
-        <button class="btn-post" onclick="openPostModal()">+ نشر</button>
+        <button class="btn-post" onclick="openModal()">+ نشر</button>
       </div>
     </div>
 
-    <!-- HOME TAB -->
+    <!-- HOME -->
     <div id="tab-home" class="tab-content active content">
-      <!-- Stories -->
-      <div class="stories-wrap" id="stories-container"></div>
-      <!-- Suggestions -->
+      <div class="stories-wrap" id="stories-wrap">
+        <div class="story-item" onclick="openModal()"><div class="story-add">➕</div><span class="sname">قصتي</span></div>
+      </div>
       <div class="suggest-wrap">
         <p class="suggest-title">مقترح للمتابعة</p>
-        <div class="suggest-list" id="suggest-container"></div>
+        <div class="suggest-list" id="suggest-list"><span style="color:rgba(255,255,255,0.3);font-size:13px;">جاري التحميل...</span></div>
       </div>
-      <!-- Posts -->
-      <div class="posts-list" id="posts-container"></div>
+      <div class="posts-list" id="posts-list"><div class="empty">جاري تحميل المنشورات...</div></div>
     </div>
 
-    <!-- REELS TAB -->
+    <!-- REELS -->
     <div id="tab-reels" class="tab-content content">
-      <div class="section-title">🎬 الفيديوهات</div>
-      <div class="reels-grid" id="reels-container"></div>
+      <div class="sec-title">🎬 الفيديوهات</div>
+      <div class="reels-grid" id="reels-grid"><div class="empty" style="grid-column:span 2;">لا توجد فيديوهات بعد</div></div>
     </div>
 
-    <!-- MESSAGES TAB -->
+    <!-- MESSAGES -->
     <div id="tab-messages" class="tab-content content">
-      <!-- Message List -->
       <div id="msg-list-view">
-        <div class="section-title">💬 الرسائل</div>
-        <div class="msg-list" id="msg-list-container"></div>
+        <div class="sec-title">💬 الرسائل</div>
+        <div class="msg-list" id="msg-list"><div class="empty">لا يوجد مستخدمون بعد</div></div>
       </div>
-      <!-- Chat View -->
       <div id="chat-view">
-        <div class="chat-header">
-          <button class="back-btn" onclick="closeChat()">←</button>
-          <div id="chat-avatar" class="msg-avatar" style="width:40px;height:40px;font-size:15px;"></div>
-          <div>
-            <div id="chat-name" style="color:#fff;font-weight:700;"></div>
-            <div class="chat-online">متصل الآن</div>
-          </div>
+        <div class="ch">
+          <button class="bk" onclick="closeChat()">←</button>
+          <div id="chat-av" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;flex-shrink:0;"></div>
+          <div><div id="chat-nm" style="color:#fff;font-weight:700;"></div><div style="color:#43C6AC;font-size:12px;">متصل الآن</div></div>
         </div>
-        <div class="chat-messages" id="chat-messages"></div>
-        <div class="chat-input-wrap">
-          <input id="chat-input" class="chat-field" type="text" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMessage()"/>
-          <button class="send-btn" onclick="sendMessage()">➤</button>
+        <div class="cm" id="chat-msgs"></div>
+        <div class="ciw">
+          <input id="chat-inp" class="cf" type="text" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+          <button class="sbtn" onclick="sendMsg()">➤</button>
         </div>
       </div>
     </div>
 
-    <!-- NOTIFICATIONS TAB -->
+    <!-- NOTIFICATIONS -->
     <div id="tab-notifications" class="tab-content content">
-      <div class="section-title">🔔 الإشعارات</div>
-      <div class="notif-list" id="notif-container"></div>
+      <div class="sec-title">🔔 الإشعارات</div>
+      <div class="notif-list" id="notif-list"><div class="empty">لا توجد إشعارات</div></div>
     </div>
 
-    <!-- PROFILE TAB -->
+    <!-- PROFILE -->
     <div id="tab-profile" class="tab-content content">
-      <div class="profile-header">
-        <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
-        <div class="profile-top">
-          <div class="profile-big-avatar" id="profile-big-avatar"></div>
-          <div>
-            <div class="profile-name" id="profile-name"></div>
-            <div class="profile-handle" id="profile-handle"></div>
-          </div>
+      <div class="prof-hdr">
+        <button class="lout" onclick="logout()">خروج</button>
+        <div style="display:flex;align-items:flex-end;gap:14px;margin-bottom:14px;">
+          <div class="pbav" id="pbav"></div>
+          <div><div id="p-name" style="color:#fff;font-size:20px;font-weight:800;"></div><div id="p-handle" style="color:rgba(255,255,255,0.5);font-size:13px;"></div></div>
         </div>
-        <!-- View mode -->
-        <div id="profile-view-mode">
-          <p class="profile-bio" id="profile-bio"></p>
-          <div class="profile-stats">
-            <div class="stat"><div class="stat-num" id="stat-posts">0</div><div class="stat-label">منشور</div></div>
-            <div class="stat"><div class="stat-num" id="stat-followers">0</div><div class="stat-label">متابع</div></div>
-            <div class="stat"><div class="stat-num" id="stat-following">0</div><div class="stat-label">متابَع</div></div>
+        <div id="p-view">
+          <p id="p-bio" style="color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:14px;"></p>
+          <div style="display:flex;gap:22px;margin-bottom:14px;">
+            <div style="text-align:center;"><div id="sp" style="color:#fff;font-weight:800;font-size:18px;">0</div><div style="color:rgba(255,255,255,0.5);font-size:12px;">منشور</div></div>
+            <div style="text-align:center;"><div id="sf" style="color:#fff;font-weight:800;font-size:18px;">0</div><div style="color:rgba(255,255,255,0.5);font-size:12px;">متابع</div></div>
+            <div style="text-align:center;"><div id="sg" style="color:#fff;font-weight:800;font-size:18px;">0</div><div style="color:rgba(255,255,255,0.5);font-size:12px;">متابَع</div></div>
           </div>
-          <button class="btn-edit" onclick="toggleEditProfile(true)">✏️ تعديل الملف الشخصي</button>
+          <button onclick="toggleEdit(true)" style="padding:9px 22px;border-radius:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;">✏️ تعديل الملف الشخصي</button>
         </div>
-        <!-- Edit mode -->
-        <div id="profile-edit-mode" style="display:none;">
-          <div class="edit-fields">
-            <input id="edit-name" class="edit-field" placeholder="الاسم"/>
-            <input id="edit-username" class="edit-field" placeholder="اسم المستخدم"/>
-            <input id="edit-bio" class="edit-field" placeholder="نبذة عنك"/>
-            <div class="edit-actions">
-              <button class="btn-save" onclick="saveProfile()">حفظ</button>
-              <button class="btn-cancel" onclick="toggleEditProfile(false)">إلغاء</button>
-            </div>
+        <div id="p-edit" style="display:none;">
+          <input id="e-name" class="ef" placeholder="الاسم الكامل"/>
+          <input id="e-user" class="ef" placeholder="اسم المستخدم"/>
+          <input id="e-bio"  class="ef" placeholder="نبذة عنك"/>
+          <div style="display:flex;gap:10px;">
+            <button onclick="saveProf()" style="flex:1;padding:10px;border-radius:10px;background:linear-gradient(135deg,#6C63FF,#9B59B6);border:none;color:#fff;font-weight:700;cursor:pointer;font-family:inherit;">حفظ ✅</button>
+            <button onclick="toggleEdit(false)" style="padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.1);border:none;color:#fff;cursor:pointer;font-family:inherit;">إلغاء</button>
           </div>
         </div>
       </div>
-      <div class="my-posts-section">
-        <div class="my-posts-title" id="my-posts-title">منشوراتي (0)</div>
-        <div id="my-posts-container"></div>
+      <div style="padding:16px;">
+        <div id="mp-title" style="color:#fff;margin-bottom:12px;font-size:15px;">منشوراتي</div>
+        <div id="mp-list"></div>
       </div>
     </div>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
-      <button class="nav-btn active" id="nav-home" onclick="switchTab('home')">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-label">الرئيسية</span>
-      </button>
-      <button class="nav-btn" id="nav-reels" onclick="switchTab('reels')">
-        <span class="nav-icon">🎬</span>
-        <span class="nav-label">ريلز</span>
-      </button>
-      <button class="nav-btn" id="nav-messages" onclick="switchTab('messages')">
-        <span class="nav-icon">💬</span>
-        <span class="nav-label">رسائل</span>
-      </button>
-      <button class="nav-btn" id="nav-notifications" onclick="switchTab('notifications')">
-        <span class="nav-icon">🔔</span>
-        <span class="nav-label">إشعارات</span>
-        <span class="notif-badge" id="notif-badge" style="display:none;"></span>
-      </button>
-      <button class="nav-btn" id="nav-profile" onclick="switchTab('profile')">
-        <span class="nav-icon">👤</span>
-        <span class="nav-label">حسابي</span>
-      </button>
+      <button class="nav-btn active" id="nav-home"          onclick="switchTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></button>
+      <button class="nav-btn"        id="nav-reels"         onclick="switchTab('reels')"><span class="nav-icon">🎬</span><span class="nav-label">ريلز</span></button>
+      <button class="nav-btn"        id="nav-messages"      onclick="switchTab('messages')"><span class="nav-icon">💬</span><span class="nav-label">رسائل</span></button>
+      <button class="nav-btn"        id="nav-notifications" onclick="switchTab('notifications')"><span class="nav-icon">🔔</span><span class="nav-label">إشعارات</span><span class="nbadge" id="nbadge"></span></button>
+      <button class="nav-btn"        id="nav-profile"       onclick="switchTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">حسابي</span></button>
     </nav>
-
-  </div><!-- end app-wrap -->
-</div><!-- end app-page -->
+  </div>
+</div>
 
 <!-- POST MODAL -->
-<div class="modal-overlay" id="post-modal" onclick="if(event.target===this)closePostModal()">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span class="modal-title">إنشاء منشور</span>
-      <button class="modal-close" onclick="closePostModal()">✕</button>
+<div class="ov" id="post-ov" onclick="if(event.target===this)closeModal()">
+  <div class="mb">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+      <span style="color:#fff;font-size:17px;font-weight:700;">إنشاء منشور</span>
+      <button onclick="closeModal()" style="background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:30px;height:30px;color:#fff;cursor:pointer;font-size:15px;">✕</button>
     </div>
-    <div class="post-types" id="post-types">
-      <button class="type-btn active" onclick="setPostType('text',this)">📝 نص</button>
-      <button class="type-btn" onclick="setPostType('image',this)">🖼️ صورة</button>
-      <button class="type-btn" onclick="setPostType('reel',this)">🎬 ريلز</button>
-      <button class="type-btn" onclick="setPostType('video_long',this)">🎥 فيديو</button>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="type-btn active" onclick="setPT('text',this)">📝 نص</button>
+      <button class="type-btn"        onclick="setPT('image',this)">🖼️ صورة</button>
+      <button class="type-btn"        onclick="setPT('reel',this)">🎬 ريلز</button>
+      <button class="type-btn"        onclick="setPT('video_long',this)">🎥 فيديو</button>
     </div>
-    <div class="modal-body">
-      <div class="modal-avatar" id="modal-avatar"></div>
-      <textarea id="post-textarea" class="post-textarea" placeholder="ماذا يدور في ذهنك؟ (سيحسّنه الذكاء الاصطناعي 🤖)"></textarea>
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+      <div id="m-av" style="width:42px;height:42px;border-radius:50%;background:#6C63FF;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;flex-shrink:0;"></div>
+      <textarea id="p-ta" class="pta" placeholder="ماذا يدور في ذهنك؟ (الذكاء الاصطناعي سيحسّنه 🤖)"></textarea>
     </div>
-    <button class="btn-publish" id="publish-btn" onclick="publishPost()">نشر الآن ✨</button>
+    <button class="bpub" id="pub-btn" onclick="publishPost()">نشر الآن ✨</button>
   </div>
 </div>
 
 <!-- STORY VIEWER -->
-<div class="story-viewer" id="story-viewer" onclick="closeStory()">
-  <div class="story-close-hint">اضغط للإغلاق</div>
-  <div class="story-card" id="story-card">
-    <span style="font-size:60px;">✨</span>
-    <span id="story-username" style="color:#fff;font-weight:700;font-size:18px;"></span>
-  </div>
+<div class="sv" id="sv" onclick="closeSV()">
+  <div style="color:rgba(255,255,255,0.5);font-size:13px;">اضغط للإغلاق</div>
+  <div class="svc" id="svc"><span style="font-size:56px;">✨</span><span id="sv-nm" style="color:#fff;font-weight:700;font-size:17px;"></span></div>
 </div>
 
 <script>
-// ════════════════════════════════════════
-// DATA
-// ════════════════════════════════════════
-const USERS = [
-  {id:1,name:"أحمد محمد",username:"ahmed_m",avatar:"أح",bio:"مطور برمجيات | محب للتقنية",followers:12400,following:890,verified:true,color:"#6C63FF"},
-  {id:2,name:"سارة علي",username:"sara_ali",avatar:"سر",bio:"مصممة جرافيك | فنانة رقمية",followers:8900,following:430,verified:false,color:"#FF6584"},
-  {id:3,name:"خالد حسن",username:"khaled_h",avatar:"خل",bio:"صانع محتوى | يوتيوبر",followers:45000,following:1200,verified:true,color:"#43C6AC"},
-  {id:4,name:"نور الدين",username:"nour_d",avatar:"نو",bio:"مصور فوتوغرافي",followers:3200,following:560,verified:false,color:"#F7971E"},
-];
+// ══ STATE ══
+let CU=null, CP=null, POSTS=[], NOTIFS=[], localMsgs={}, followSet=new Set(), allProfs={}, activeCID=null, curPT='text';
+const COLORS=['#6C63FF','#FF6584','#43C6AC','#F7971E','#A29BFE','#FD79A8'];
+const fmtN=n=>n>=1000?(n/1000).toFixed(1)+'K':n;
+const nowT=()=>new Date().toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'});
+const tAgo=ts=>{const d=(Date.now()-new Date(ts))/1000;if(d<60)return'الآن';if(d<3600)return`منذ ${Math.floor(d/60)} دقيقة`;if(d<86400)return`منذ ${Math.floor(d/3600)} ساعة`;return`منذ ${Math.floor(d/86400)} يوم`;};
+const pickC=id=>COLORS[parseInt((id||'0').replace(/-/g,'').slice(0,4),16)%COLORS.length];
+const profOf=id=>id===CU?.id?CP:(allProfs[id]||{full_name:'مستخدم',username:'user',avatar_color:'#6C63FF'});
+const avEl=(id,sz=40)=>{const p=profOf(id);return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${p.avatar_color||pickC(id)};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:${Math.round(sz*.38)}px;flex-shrink:0;">${(p.full_name||'م')[0]}</div>`;};
+const showErr=m=>{const e=document.getElementById('auth-err');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',4000);};
+const showOK=m=>{const e=document.getElementById('auth-ok');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',4000);};
 
-let POSTS = [
-  {id:1,userId:2,type:"text",content:"التصميم الجيد لا يُرى، يُشعر به فقط ✨ كل تفصيلة صغيرة لها معنى في عالم الجرافيك.",likes:234,comments:18,shares:45,time:"منذ دقيقتين",liked:false},
-  {id:2,userId:3,type:"video_long",content:"شرح كامل: كيف تبني تطبيقك الأول من الصفر؟ 🚀",duration:"42:18",views:"128K",likes:4500,comments:312,shares:890,time:"منذ 3 ساعات",liked:false},
-  {id:3,userId:1,type:"reel",content:"نصيحة اليوم في 30 ثانية ⚡",duration:"0:28",views:"89K",likes:1200,comments:67,shares:230,time:"منذ 5 ساعات",liked:false},
-  {id:4,userId:4,type:"image",content:"غروب الشمس من قمة الجبل 🌄 اللحظات الهادئة هي التي تصنع الذكريات الخالدة.",likes:567,comments:89,shares:112,time:"منذ يوم",liked:false},
-  {id:5,userId:1,type:"text",content:"قاعدة ذهبية في البرمجة: الكود الذي تكتبه اليوم سيقرأه شخص آخر غداً، اكتبه بوضوح 💡",likes:890,comments:156,shares:340,time:"منذ يومين",liked:false},
-];
+// ══ INIT ══
+window.addEventListener('DOMContentLoaded',async()=>{
+  const{data:{session}}=await db.auth.getSession();
+  if(session){CU=session.user;await loadCP();hideLd();launchApp();}
+  else{hideLd();document.getElementById('login-page').classList.add('active');}
+});
+const hideLd=()=>document.getElementById('loading-screen').style.display='none';
 
-const STORIES = [
-  {id:1,userId:2,seen:false},{id:2,userId:3,seen:false},{id:3,userId:4,seen:true},{id:4,userId:1,seen:false}
-];
-
-let MESSAGES = {
-  2:[{from:"them",text:"مرحباً! كيف حالك؟",time:"10:30"},{from:"me",text:"بخير الحمد لله، وأنت؟",time:"10:32"},{from:"them",text:"تمام شكراً! شفت تصميمك الجديد، رائع جداً 🔥",time:"10:33"}],
-  3:[{from:"them",text:"هل تشاهد فيديوهاتي؟",time:"أمس"},{from:"me",text:"طبعاً! محتوى ممتاز دايماً 👍",time:"أمس"}]
-};
-
-let NOTIFICATIONS = [
-  {id:1,userId:2,action:"أعجب بمنشورك",time:"منذ دقيقة",read:false},
-  {id:2,userId:3,action:"تابعك",time:"منذ 10 دقائق",read:false},
-  {id:3,userId:4,action:"علّق على صورتك: جميلة جداً! 🌟",time:"منذ ساعة",read:false},
-  {id:4,userId:1,action:"شارك منشورك",time:"منذ 3 ساعات",read:true},
-  {id:5,userId:2,action:"أعجب بتعليقك",time:"منذ يوم",read:true},
-];
-
-let currentUser = null;
-let followedUsers = [2,3];
-let currentPostType = "text";
-let activeChatId = null;
-
-// ════════════════════════════════════════
-// HELPERS
-// ════════════════════════════════════════
-function getUser(id){return id===99?currentUser:USERS.find(u=>u.id===id);}
-function fmtNum(n){return n>=1000?(n/1000).toFixed(1)+"K":n;}
-function nowTime(){return new Date().toLocaleTimeString("ar",{hour:"2-digit",minute:"2-digit"});}
-
-function avatarHTML(userId,size=40,extraStyle=""){
-  const u=getUser(userId);
-  return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${u?.color||'#6C63FF'};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:${size*0.38}px;flex-shrink:0;${extraStyle}">${u?.avatar||'؟'}</div>`;
+// ══ AUTH ══
+function switchAuth(m){
+  document.querySelectorAll('.tab-switch button').forEach((b,i)=>b.classList.toggle('active',(m==='login'&&i===0)||(m==='register'&&i===1)));
+  document.getElementById('form-login').classList.toggle('active',m==='login');
+  document.getElementById('form-register').classList.toggle('active',m==='register');
+}
+async function handleLogin(){
+  const em=document.getElementById('l-email').value.trim(), pw=document.getElementById('l-pass').value;
+  if(!em||!pw){showErr('يرجى إدخال البريد وكلمة المرور');return;}
+  const{data,error}=await db.auth.signInWithPassword({email:em,password:pw});
+  if(error){showErr('خطأ: '+error.message);return;}
+  CU=data.user;await loadCP();document.getElementById('login-page').classList.remove('active');launchApp();
+}
+async function handleRegister(){
+  const nm=document.getElementById('r-name').value.trim(), un=document.getElementById('r-username').value.trim().replace(/\s/g,''), em=document.getElementById('r-email').value.trim(), pw=document.getElementById('r-pass').value;
+  if(!nm||!un||!em||!pw){showErr('يرجى ملء جميع الحقول');return;}
+  if(pw.length<6){showErr('كلمة المرور يجب أن تكون 6 أحرف على الأقل');return;}
+  const{data,error}=await db.auth.signUp({email:em,password:pw});
+  if(error){showErr('خطأ: '+error.message);return;}
+  CU=data.user;
+  const col=COLORS[Math.floor(Math.random()*COLORS.length)];
+  await db.from('profiles').insert({id:CU.id,username:un,full_name:nm,bio:'مرحباً بي في نيكسوس!',avatar_color:col,followers_count:0,following_count:0});
+  await loadCP();showOK('تم إنشاء الحساب بنجاح 🎉');
+  document.getElementById('login-page').classList.remove('active');launchApp();
+}
+async function logout(){
+  await db.auth.signOut();CU=CP=null;POSTS=[];NOTIFS=[];followSet=new Set();allProfs={};localMsgs={};
+  document.getElementById('app-page').classList.remove('active');document.getElementById('login-page').classList.add('active');switchTab('home');
 }
 
-// ════════════════════════════════════════
-// AUTH
-// ════════════════════════════════════════
-function switchAuth(mode){
-  document.querySelectorAll('.tab-switch button').forEach((b,i)=>b.classList.toggle('active',(mode==='login'&&i===0)||(mode==='register'&&i===1)));
-  document.getElementById('form-login').classList.toggle('active',mode==='login');
-  document.getElementById('form-register').classList.toggle('active',mode==='register');
+// ══ LOAD DATA ══
+async function loadCP(){const{data}=await db.from('profiles').select('*').eq('id',CU.id).single();CP=data||{id:CU.id,full_name:CU.email?.split('@')[0]||'مستخدم',username:CU.email?.split('@')[0]||'user',bio:'',avatar_color:'#6C63FF',followers_count:0,following_count:0};}
+async function loadAllProfs(){const{data}=await db.from('profiles').select('*');(data||[]).forEach(p=>allProfs[p.id]=p);}
+async function loadFollows(){const{data}=await db.from('follows').select('following_id').eq('follower_id',CU.id);followSet=new Set((data||[]).map(r=>r.following_id));}
+async function loadPosts(){
+  const{data}=await db.from('posts').select('*').order('created_at',{ascending:false}).limit(40);
+  const{data:lk}=await db.from('likes').select('post_id').eq('user_id',CU?.id||'');
+  const ls=new Set((lk||[]).map(l=>l.post_id));
+  POSTS=(data||[]).map(p=>({...p,liked:ls.has(p.id)}));
+}
+async function loadNotifs(){
+  const{data}=await db.from('notifications').select('*').eq('user_id',CU.id).order('created_at',{ascending:false}).limit(20);
+  NOTIFS=data||[];renderNotifs();updateBadge();
 }
 
-function handleLogin(){
-  const u=document.getElementById('login-username').value.trim();
-  const p=document.getElementById('login-password').value.trim();
-  if(!u||!p)return;
-  currentUser={id:99,name:"أنت",username:u,avatar:u[0].toUpperCase(),bio:"مرحباً بي في نيكسوس!",followers:0,following:followedUsers.length,verified:false,color:"#6C63FF"};
-  launchApp();
-}
-
-function handleRegister(){
-  const name=document.getElementById('reg-name').value.trim();
-  const u=document.getElementById('reg-username').value.trim();
-  const p=document.getElementById('reg-password').value.trim();
-  if(!name||!u||!p)return;
-  currentUser={id:99,name,username:u,avatar:name[0],bio:"مرحباً بي في نيكسوس!",followers:0,following:0,verified:false,color:"#6C63FF"};
-  launchApp();
-}
-
-function logout(){
-  currentUser=null;
-  document.getElementById('login-page').classList.add('active');
-  document.getElementById('app-page').classList.remove('active');
-  document.getElementById('login-username').value='';
-  document.getElementById('login-password').value='';
-}
-
-function launchApp(){
-  document.getElementById('login-page').classList.remove('active');
+// ══ LAUNCH ══
+async function launchApp(){
   document.getElementById('app-page').classList.add('active');
+  updateMAv();
+  await Promise.all([loadAllProfs(),loadFollows(),loadPosts()]);
   renderAll();
 }
+function updateMAv(){const e=document.getElementById('m-av');if(!e||!CP)return;e.style.background=CP.avatar_color||'#6C63FF';e.textContent=(CP.full_name||'م')[0];}
 
-// ════════════════════════════════════════
-// TABS
-// ════════════════════════════════════════
-function switchTab(name){
+// ══ TABS ══
+function switchTab(n){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  document.getElementById('nav-'+name).classList.add('active');
-  if(name==='notifications'){markNotifsRead();}
-  if(name==='profile'){renderProfile();}
+  document.getElementById('tab-'+n).classList.add('active');
+  document.getElementById('nav-'+n).classList.add('active');
+  if(n==='notifications'){markRead();}
+  if(n==='profile'){renderProf();}
+  if(n==='messages'){closeChat();renderMsgList();}
 }
 
-// ════════════════════════════════════════
-// RENDER ALL
-// ════════════════════════════════════════
-function renderAll(){
-  renderStories();
-  renderSuggestions();
-  renderPosts();
-  renderReels();
-  renderMessages();
-  renderNotifications();
-  renderProfile();
-  updateNotifBadge();
-  // modal avatar
-  const ma=document.getElementById('modal-avatar');
-  if(ma){ma.style.background=currentUser?.color||'#6C63FF';ma.textContent=currentUser?.avatar||'أ';}
-}
+function renderAll(){renderStories();renderSuggest();renderPosts();renderReels();renderMsgList();renderNotifs();renderProf();updateBadge();}
 
-// ════════════════════════════════════════
-// STORIES
-// ════════════════════════════════════════
+// ══ STORIES ══
 function renderStories(){
-  const c=document.getElementById('stories-container');
-  let h=`<div class="story-item" onclick="openPostModal()"><div class="story-add">➕</div><span class="story-name">قصتي</span></div>`;
-  STORIES.forEach(s=>{
-    const u=getUser(s.userId);
-    h+=`<div class="story-item" onclick="openStory(${s.userId})">
-      <div class="story-ring${s.seen?' seen':''}">
-        <div class="story-avatar" style="background:${u?.color||'#6C63FF'}">${u?.avatar||'؟'}</div>
-      </div>
-      <span class="story-name">${u?.name?.split(' ')[0]||''}</span>
-    </div>`;
+  const c=document.getElementById('stories-wrap');
+  let h=`<div class="story-item" onclick="openModal()"><div class="story-add">➕</div><span class="sname">قصتي</span></div>`;
+  Object.values(allProfs).filter(p=>p.id!==CU?.id).slice(0,6).forEach(p=>{
+    h+=`<div class="story-item" onclick="openSV('${p.id}')"><div class="story-ring"><div class="s-inner" style="background:${p.avatar_color||'#6C63FF'}">${(p.full_name||'م')[0]}</div></div><span class="sname">${(p.full_name||'').split(' ')[0]}</span></div>`;
   });
   c.innerHTML=h;
 }
+function openSV(id){const p=profOf(id);document.getElementById('svc').style.background=`linear-gradient(135deg,${p.avatar_color||'#6C63FF'},#1a1a2e)`;document.getElementById('sv-nm').textContent=p.full_name||'';document.getElementById('sv').classList.add('open');}
+function closeSV(){document.getElementById('sv').classList.remove('open');}
 
-function openStory(userId){
-  const u=getUser(userId);
-  document.getElementById('story-card').style.background=`linear-gradient(135deg,${u?.color||'#6C63FF'},#1a1a2e)`;
-  document.getElementById('story-username').textContent=u?.name||'';
-  document.getElementById('story-viewer').classList.add('open');
+// ══ SUGGEST ══
+function renderSuggest(){
+  const c=document.getElementById('suggest-list');
+  const list=Object.values(allProfs).filter(p=>p.id!==CU?.id&&!followSet.has(p.id)).slice(0,4);
+  if(!list.length){c.innerHTML='<span style="color:rgba(255,255,255,0.4);font-size:13px;">أنت تتابع الجميع 🎉</span>';return;}
+  c.innerHTML=list.map(p=>`<div class="sc"><div class="sav" style="background:${p.avatar_color||'#6C63FF'}">${(p.full_name||'م')[0]}</div><div style="color:#fff;font-size:12px;font-weight:600;text-align:center;">${p.full_name||''}</div><div style="color:rgba(255,255,255,0.4);font-size:11px;">${fmtN(p.followers_count||0)} متابع</div><button class="btn-follow" onclick="toggleFollow('${p.id}')">متابعة</button></div>`).join('');
 }
-function closeStory(){document.getElementById('story-viewer').classList.remove('open');}
-
-// ════════════════════════════════════════
-// SUGGESTIONS
-// ════════════════════════════════════════
-function renderSuggestions(){
-  const c=document.getElementById('suggest-container');
-  const unFollowed=USERS.filter(u=>!followedUsers.includes(u.id)).slice(0,3);
-  if(!unFollowed.length){c.innerHTML='<span style="color:rgba(255,255,255,0.4);font-size:13px;">أنت تتابع الجميع!</span>';return;}
-  c.innerHTML=unFollowed.map(u=>`
-    <div class="suggest-card">
-      <div class="suggest-avatar" style="background:${u.color}">${u.avatar}</div>
-      <div class="suggest-name">${u.name}</div>
-      <div class="suggest-followers">${fmtNum(u.followers)} متابع</div>
-      <button class="${followedUsers.includes(u.id)?'btn-following':'btn-follow'}" onclick="toggleFollow(${u.id})">${followedUsers.includes(u.id)?'متابَع':'متابعة'}</button>
-    </div>`).join('');
+async function toggleFollow(id){
+  if(followSet.has(id)){await db.from('follows').delete().eq('follower_id',CU.id).eq('following_id',id);followSet.delete(id);}
+  else{await db.from('follows').insert({follower_id:CU.id,following_id:id});followSet.add(id);await db.from('notifications').insert({user_id:id,actor_id:CU.id,action:'تابعك'});}
+  renderSuggest();
 }
 
-function toggleFollow(userId){
-  if(followedUsers.includes(userId)){followedUsers=followedUsers.filter(id=>id!==userId);}
-  else{followedUsers.push(userId);}
-  renderSuggestions();
+// ══ POSTS ══
+function pcHTML(post){
+  const p=profOf(post.user_id);
+  let med='';
+  if(post.post_type==='video_long'||post.post_type==='reel') med=`<div class="pm"><div class="pplay">${post.post_type==='reel'?'🎬':'▶️'}</div><div style="color:rgba(255,255,255,0.7);font-size:12px;">${post.post_type==='reel'?'🎬 ريلز':'🎥 فيديو'}</div><div class="pvw">👁 ${fmtN(post.views_count||0)}</div></div>`;
+  else if(post.post_type==='image') med=`<div class="pimg">🖼️</div>`;
+  return`<div class="post-card"><div class="ph">${avEl(post.user_id,40)}<div class="pui"><div class="pun">${p.full_name||'مستخدم'}</div><div class="phd">@${p.username||'user'} · ${tAgo(post.created_at)}</div></div><span style="color:rgba(255,255,255,0.3);font-size:18px;">⋯</span></div>${med}<div class="pt">${post.content}</div><div class="pa"><button class="abt" onclick="toggleLike('${post.id}')"><span style="font-size:17px;">${post.liked?'❤️':'🤍'}</span><span>${post.likes_count>0?fmtN(post.likes_count):''}</span></button><button class="abt"><span style="font-size:17px;">💬</span><span>${post.comments_count>0?fmtN(post.comments_count):''}</span></button><button class="abt"><span style="font-size:17px;">🔁</span></button></div></div>`;
+}
+function renderPosts(){const c=document.getElementById('posts-list');c.innerHTML=POSTS.length?POSTS.map(pcHTML).join(''):'<div class="empty">لا توجد منشورات بعد. كن أول من ينشر! 🚀</div>';}
+async function toggleLike(id){
+  const post=POSTS.find(p=>p.id===id);if(!post)return;
+  if(post.liked){await db.from('likes').delete().eq('user_id',CU.id).eq('post_id',id);post.liked=false;post.likes_count=Math.max(0,(post.likes_count||1)-1);}
+  else{await db.from('likes').insert({user_id:CU.id,post_id:id});post.liked=true;post.likes_count=(post.likes_count||0)+1;if(post.user_id!==CU.id)await db.from('notifications').insert({user_id:post.user_id,actor_id:CU.id,action:'أعجب بمنشورك'});}
+  await db.from('posts').update({likes_count:post.likes_count}).eq('id',id);
+  renderPosts();renderMyPosts();
 }
 
-// ════════════════════════════════════════
-// POSTS
-// ════════════════════════════════════════
-function postCardHTML(post){
-  const u=getUser(post.userId);
-  let mediaHTML='';
-  if(post.type==='video_long'||post.type==='reel'){
-    mediaHTML=`<div class="post-media">
-      <div class="post-play">${post.type==='reel'?'🎬':'▶️'}</div>
-      <div class="post-media-label">${post.type==='reel'?'🎬 ريلز':'🎥 فيديو طويل'} · ${post.duration||'0:00'}</div>
-      <div class="post-views">👁 ${post.views||'0'}</div>
-    </div>`;
-  } else if(post.type==='image'){
-    mediaHTML=`<div class="post-image">🖼️</div>`;
-  }
-  return `<div class="post-card">
-    <div class="post-header">
-      ${avatarHTML(post.userId,40)}
-      <div class="post-user-info">
-        <div class="post-username">${u?.name||'مستخدم'} ${u?.verified?'✅':''}</div>
-        <div class="post-handle">@${u?.username||''} · ${post.time}</div>
-      </div>
-      <span style="color:rgba(255,255,255,0.3);font-size:20px;cursor:pointer;">⋯</span>
-    </div>
-    ${mediaHTML}
-    <div class="post-text">${post.content}</div>
-    <div class="post-actions">
-      <button class="action-btn" onclick="toggleLike(${post.id})">
-        <span class="action-icon">${post.liked?'❤️':'🤍'}</span>
-        <span>${post.likes>0?fmtNum(post.likes):''}</span>
-      </button>
-      <button class="action-btn"><span class="action-icon">💬</span><span>${post.comments>0?fmtNum(post.comments):''}</span></button>
-      <button class="action-btn"><span class="action-icon">🔁</span><span>${post.shares>0?fmtNum(post.shares):''}</span></button>
-    </div>
-  </div>`;
-}
-
-function renderPosts(){
-  document.getElementById('posts-container').innerHTML=POSTS.map(postCardHTML).join('');
-}
-
-function toggleLike(postId){
-  const post=POSTS.find(p=>p.id===postId);
-  if(!post)return;
-  post.liked=!post.liked;
-  post.likes+=post.liked?1:-1;
-  renderPosts();
-  renderMyPosts();
-}
-
-// ════════════════════════════════════════
-// REELS
-// ════════════════════════════════════════
+// ══ REELS ══
 function renderReels(){
-  const reels=POSTS.filter(p=>p.type==='reel'||p.type==='video_long');
-  const c=document.getElementById('reels-container');
-  if(!reels.length){c.innerHTML='<div style="grid-column:span 2;text-align:center;color:rgba(255,255,255,0.4);padding:40px;">لا توجد فيديوهات بعد</div>';return;}
-  c.innerHTML=reels.map(post=>{
-    const u=getUser(post.userId);
-    return `<div class="reel-card">
-      <div class="reel-thumb">
-        <span style="font-size:32px;">${post.type==='reel'?'🎬':'🎥'}</span>
-        <span style="color:rgba(255,255,255,0.6);font-size:12px;">${post.duration||''}</span>
-      </div>
-      <div class="reel-info">
-        <div class="reel-title">${post.content.slice(0,50)}${post.content.length>50?'...':''}</div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div style="width:20px;height:20px;border-radius:50%;background:${u?.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;">${u?.avatar||'؟'}</div>
-          <span style="color:rgba(255,255,255,0.5);font-size:11px;">${u?.name||''}</span>
-        </div>
-        <div class="reel-meta">👁 ${post.views||'0'} · ❤️ ${fmtNum(post.likes)}</div>
-      </div>
-    </div>`;
-  }).join('');
+  const r=POSTS.filter(p=>p.post_type==='reel'||p.post_type==='video_long');
+  const c=document.getElementById('reels-grid');
+  if(!r.length){c.innerHTML='<div class="empty" style="grid-column:span 2;">لا توجد فيديوهات بعد</div>';return;}
+  c.innerHTML=r.map(post=>{const p=profOf(post.user_id);return`<div class="rc"><div class="rt"><span style="font-size:30px;">${post.post_type==='reel'?'🎬':'🎥'}</span></div><div class="ri"><div style="color:rgba(255,255,255,0.8);font-size:12px;margin-bottom:5px;line-height:1.4;">${post.content.slice(0,48)}...</div><div style="color:rgba(255,255,255,0.4);font-size:11px;">❤️ ${fmtN(post.likes_count||0)} · ${p.full_name||''}</div></div></div>`;}).join('');
 }
 
-// ════════════════════════════════════════
-// MESSAGES
-// ════════════════════════════════════════
-function renderMessages(){
-  const c=document.getElementById('msg-list-container');
-  c.innerHTML=USERS.map(u=>{
-    const lastMsg=MESSAGES[u.id]?.slice(-1)[0];
-    return `<div class="msg-item" onclick="openChat(${u.id})">
-      <div class="msg-avatar-wrap">
-        <div class="msg-avatar" style="background:${u.color}">${u.avatar}</div>
-        <div class="online-dot"></div>
-      </div>
-      <div class="msg-info">
-        <div class="msg-name-row">
-          <span class="msg-name">${u.name}</span>
-          <span class="msg-time">${lastMsg?.time||'...'}</span>
-        </div>
-        <div class="msg-preview">${lastMsg?.text?.slice(0,35)||'ابدأ محادثة...'}</div>
-      </div>
-    </div>`;
-  }).join('');
+// ══ MESSAGES ══
+function renderMsgList(){
+  const c=document.getElementById('msg-list');
+  const users=Object.values(allProfs).filter(p=>p.id!==CU?.id);
+  if(!users.length){c.innerHTML='<div class="empty">لا يوجد مستخدمون آخرون بعد</div>';return;}
+  c.innerHTML=users.map(p=>{const ms=localMsgs[p.id]||[];const last=ms[ms.length-1];return`<div class="mi" onclick="openChat('${p.id}')"><div class="maw"><div class="mav" style="background:${p.avatar_color||'#6C63FF'}">${(p.full_name||'م')[0]}</div><div class="odot"></div></div><div style="flex:1;"><div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span style="color:#fff;font-weight:700;">${p.full_name||''}</span><span style="color:rgba(255,255,255,0.3);font-size:12px;">${last?.time||''}</span></div><div style="color:rgba(255,255,255,0.45);font-size:13px;">${last?.text?.slice(0,35)||'ابدأ محادثة...'}</div></div></div>`;}).join('');
 }
-
-function openChat(userId){
-  activeChatId=userId;
-  const u=getUser(userId);
+function openChat(id){
+  activeCID=id;const p=profOf(id);
   document.getElementById('msg-list-view').style.display='none';
-  const cv=document.getElementById('chat-view');
-  cv.classList.add('open');
-  const ca=document.getElementById('chat-avatar');
-  ca.style.background=u?.color||'#6C63FF';
-  ca.textContent=u?.avatar||'؟';
-  document.getElementById('chat-name').textContent=u?.name||'';
-  renderChatMessages();
+  document.getElementById('chat-view').classList.add('open');
+  const ca=document.getElementById('chat-av');ca.style.background=p.avatar_color||'#6C63FF';ca.textContent=(p.full_name||'م')[0];
+  document.getElementById('chat-nm').textContent=p.full_name||'';
+  renderChatMsgs();
 }
-
-function closeChat(){
-  activeChatId=null;
-  document.getElementById('msg-list-view').style.display='block';
-  document.getElementById('chat-view').classList.remove('open');
-}
-
-function renderChatMessages(){
-  const msgs=MESSAGES[activeChatId]||[];
-  const c=document.getElementById('chat-messages');
-  c.innerHTML=msgs.map(m=>`
-    <div class="bubble-wrap-${m.from==='me'?'me':'them'}">
-      <div class="bubble bubble-${m.from==='me'?'me':'them'}">
-        <div class="bubble-text">${m.text}</div>
-        <div class="bubble-time">${m.time}</div>
-      </div>
-    </div>`).join('');
+function closeChat(){activeCID=null;document.getElementById('msg-list-view').style.display='block';document.getElementById('chat-view').classList.remove('open');}
+function renderChatMsgs(){
+  const ms=localMsgs[activeCID]||[];
+  const c=document.getElementById('chat-msgs');
+  c.innerHTML=ms.map(m=>`<div class="${m.from==='me'?'bwm':'bwt'}"><div class="bbl ${m.from==='me'?'bme':'bth'}"><div style="color:#fff;font-size:14px;">${m.text}</div><div style="color:rgba(255,255,255,0.4);font-size:11px;margin-top:4px;">${m.time}</div></div></div>`).join('');
   c.scrollTop=c.scrollHeight;
 }
-
-async function sendMessage(){
-  const input=document.getElementById('chat-input');
-  const text=input.value.trim();
-  if(!text||!activeChatId)return;
-  const time=nowTime();
-  if(!MESSAGES[activeChatId])MESSAGES[activeChatId]=[];
-  MESSAGES[activeChatId].push({from:"me",text,time});
-  input.value='';
-  renderChatMessages();
-  renderMessages();
-  // typing indicator
-  const c=document.getElementById('chat-messages');
-  const typing=document.createElement('div');
-  typing.className='bubble-wrap-them';
-  typing.innerHTML='<div class="typing-bubble">يكتب...</div>';
-  c.appendChild(typing);
-  c.scrollTop=c.scrollHeight;
-  // AI reply
+async function sendMsg(){
+  const inp=document.getElementById('chat-inp'),text=inp.value.trim();
+  if(!text||!activeCID)return;
+  if(!localMsgs[activeCID])localMsgs[activeCID]=[];
+  localMsgs[activeCID].push({from:'me',text,time:nowT()});
+  inp.value='';renderChatMsgs();renderMsgList();
+  const c=document.getElementById('chat-msgs'),t=document.createElement('div');
+  t.className='bwt';t.innerHTML='<div class="bbl bth" style="color:rgba(255,255,255,0.5);">يكتب...</div>';c.appendChild(t);c.scrollTop=c.scrollHeight;
   try{
-    const u=getUser(activeChatId);
-    const res=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:`أنت ${u?.name||'صديق'}، رد على هذه الرسالة بشكل طبيعي وودود باللغة العربية في جملة أو جملتين فقط: "${text}"`}]})
-    });
-    const data=await res.json();
-    const reply=data.content?.[0]?.text||"😊";
-    typing.remove();
-    MESSAGES[activeChatId].push({from:"them",text:reply,time:nowTime()});
-    renderChatMessages();
-    renderMessages();
-  }catch{typing.remove();}
+    const p=profOf(activeCID);
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`أنت ${p.full_name||'صديق'}، رد بشكل طبيعي وودود باللغة العربية في جملتين فقط: "${text}"`}]})});
+    const data=await res.json();t.remove();
+    localMsgs[activeCID].push({from:'them',text:data.content?.[0]?.text||'😊',time:nowT()});
+    renderChatMsgs();renderMsgList();
+  }catch{t.remove();}
 }
 
-// ════════════════════════════════════════
-// NOTIFICATIONS
-// ════════════════════════════════════════
-function renderNotifications(){
-  const c=document.getElementById('notif-container');
-  c.innerHTML=NOTIFICATIONS.map(n=>{
-    const u=getUser(n.userId);
-    return `<div class="notif-item${n.read?'':' unread'}">
-      <div class="notif-avatar" style="background:${u?.color||'#6C63FF'}">${u?.avatar||'؟'}</div>
-      <div class="notif-text">
-        <span class="notif-name">${u?.name||''}</span>
-        <span class="notif-action"> ${n.action}</span>
-        <div class="notif-time">${n.time}</div>
-      </div>
-      ${n.read?'':'<div class="unread-dot"></div>'}
-    </div>`;
-  }).join('');
+// ══ NOTIFS ══
+function renderNotifs(){
+  const c=document.getElementById('notif-list');
+  if(!NOTIFS.length){c.innerHTML='<div class="empty">لا توجد إشعارات بعد</div>';return;}
+  c.innerHTML=NOTIFS.map(n=>{const p=profOf(n.actor_id);return`<div class="ni${n.is_read?'':' unr'}"><div class="nav2" style="background:${p.avatar_color||'#6C63FF'}">${(p.full_name||'م')[0]}</div><div style="flex:1;"><span style="color:#fff;font-weight:700;">${p.full_name||''}</span> <span style="color:rgba(255,255,255,0.7);">${n.action}</span><div style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:3px;">${tAgo(n.created_at)}</div></div>${n.is_read?'':'<div class="udot"></div>'}</div>`;}).join('');
+}
+async function markRead(){await db.from('notifications').update({is_read:true}).eq('user_id',CU.id).eq('is_read',false);NOTIFS.forEach(n=>n.is_read=true);renderNotifs();updateBadge();}
+function updateBadge(){const u=NOTIFS.filter(n=>!n.is_read).length;const b=document.getElementById('nbadge');b.textContent=u||'';b.style.display=u?'block':'none';}
+
+// ══ PROFILE ══
+function renderProf(){
+  if(!CP)return;
+  const mp=POSTS.filter(p=>p.user_id===CU?.id);
+  document.getElementById('pbav').textContent=(CP.full_name||'م')[0];
+  document.getElementById('pbav').style.background=CP.avatar_color||'#6C63FF';
+  document.getElementById('p-name').textContent=CP.full_name||'';
+  document.getElementById('p-handle').textContent='@'+(CP.username||'');
+  document.getElementById('p-bio').textContent=CP.bio||'';
+  document.getElementById('sp').textContent=mp.length;
+  document.getElementById('sf').textContent=CP.followers_count||0;
+  document.getElementById('sg').textContent=followSet.size;
+  document.getElementById('mp-title').textContent=`منشوراتي (${mp.length})`;
+  renderMyPosts();loadNotifs();
+}
+function renderMyPosts(){const mp=POSTS.filter(p=>p.user_id===CU?.id);const c=document.getElementById('mp-list');c.innerHTML=mp.length?mp.map(pcHTML).join(''):'<div class="empty">لم تنشر شيئاً بعد<br/><button class="btn-pnow" onclick="openModal()">أنشر الآن 🚀</button></div>';}
+function toggleEdit(s){document.getElementById('p-view').style.display=s?'none':'block';document.getElementById('p-edit').style.display=s?'block':'none';if(s){document.getElementById('e-name').value=CP.full_name||'';document.getElementById('e-user').value=CP.username||'';document.getElementById('e-bio').value=CP.bio||'';}}
+async function saveProf(){
+  const nm=document.getElementById('e-name').value.trim(),un=document.getElementById('e-user').value.trim(),bio=document.getElementById('e-bio').value.trim();
+  const{error}=await db.from('profiles').update({full_name:nm,username:un,bio}).eq('id',CU.id);
+  if(error){alert('خطأ: '+error.message);return;}
+  CP={...CP,full_name:nm,username:un,bio};allProfs[CU.id]=CP;
+  toggleEdit(false);renderProf();updateMAv();
 }
 
-function markNotifsRead(){
-  NOTIFICATIONS.forEach(n=>n.read=true);
-  renderNotifications();
-  updateNotifBadge();
-}
-
-function updateNotifBadge(){
-  const unread=NOTIFICATIONS.filter(n=>!n.read).length;
-  const badge=document.getElementById('notif-badge');
-  if(unread>0){badge.textContent=unread;badge.style.display='block';}
-  else{badge.style.display='none';}
-}
-
-// ════════════════════════════════════════
-// PROFILE
-// ════════════════════════════════════════
-function renderProfile(){
-  if(!currentUser)return;
-  const myPosts=POSTS.filter(p=>p.userId===99);
-  document.getElementById('profile-big-avatar').textContent=currentUser.avatar;
-  document.getElementById('profile-name').textContent=currentUser.name;
-  document.getElementById('profile-handle').textContent='@'+currentUser.username;
-  document.getElementById('profile-bio').textContent=currentUser.bio;
-  document.getElementById('stat-posts').textContent=myPosts.length;
-  document.getElementById('stat-followers').textContent=currentUser.followers;
-  document.getElementById('stat-following').textContent=followedUsers.length;
-  document.getElementById('my-posts-title').textContent=`منشوراتي (${myPosts.length})`;
-  renderMyPosts();
-}
-
-function renderMyPosts(){
-  const myPosts=POSTS.filter(p=>p.userId===99);
-  const c=document.getElementById('my-posts-container');
-  if(!myPosts.length){
-    c.innerHTML=`<div class="empty-posts">لم تنشر شيئاً بعد<br/><button class="btn-post-now" onclick="openPostModal()">أنشر الآن</button></div>`;
-    return;
-  }
-  c.innerHTML=myPosts.map(postCardHTML).join('');
-}
-
-function toggleEditProfile(show){
-  document.getElementById('profile-view-mode').style.display=show?'none':'block';
-  document.getElementById('profile-edit-mode').style.display=show?'block':'none';
-  if(show){
-    document.getElementById('edit-name').value=currentUser.name;
-    document.getElementById('edit-username').value=currentUser.username;
-    document.getElementById('edit-bio').value=currentUser.bio;
-  }
-}
-
-function saveProfile(){
-  currentUser.name=document.getElementById('edit-name').value||currentUser.name;
-  currentUser.username=document.getElementById('edit-username').value||currentUser.username;
-  currentUser.bio=document.getElementById('edit-bio').value||currentUser.bio;
-  currentUser.avatar=currentUser.name[0];
-  toggleEditProfile(false);
-  renderProfile();
-}
-
-// ════════════════════════════════════════
-// POST MODAL
-// ════════════════════════════════════════
-function openPostModal(){
-  document.getElementById('post-modal').classList.add('open');
-  document.getElementById('post-textarea').focus();
-}
-function closePostModal(){
-  document.getElementById('post-modal').classList.remove('open');
-  document.getElementById('post-textarea').value='';
-}
-function setPostType(type,btn){
-  currentPostType=type;
-  document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
+// ══ POST MODAL ══
+function openModal(){document.getElementById('post-ov').classList.add('open');document.getElementById('p-ta').focus();}
+function closeModal(){document.getElementById('post-ov').classList.remove('open');document.getElementById('p-ta').value='';}
+function setPT(t,btn){curPT=t;document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
 async function publishPost(){
-  const text=document.getElementById('post-textarea').value.trim();
-  if(!text)return;
-  const btn=document.getElementById('publish-btn');
-  btn.disabled=true;
-  btn.textContent='🤖 يحسّن المنشور...';
+  const text=document.getElementById('p-ta').value.trim();if(!text)return;
+  const btn=document.getElementById('pub-btn');btn.disabled=true;btn.textContent='🤖 يحسّن المنشور...';
   let enhanced=text;
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:`أنت مساعد لشبكة اجتماعية. المستخدم نشر: "${text}". رد بـ JSON فقط بدون backticks: {"enhanced": "نسخة محسّنة وجذابة من المنشور مع إيموجي مناسبة"}`}]})
-    });
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`أنت مساعد لشبكة اجتماعية. المستخدم نشر: "${text}". رد بـ JSON فقط بدون backticks: {"enhanced":"نسخة محسّنة مع إيموجي"}`}]})});
     const data=await res.json();
-    const t=data.content?.[0]?.text||"";
-    try{enhanced=JSON.parse(t).enhanced||text;}catch{}
+    try{enhanced=JSON.parse(data.content?.[0]?.text||'{}').enhanced||text;}catch{}
   }catch{}
-  const post={
-    id:Date.now(),userId:99,type:currentPostType,content:enhanced,
-    likes:0,comments:0,shares:0,time:"الآن",liked:false,
-    duration:currentPostType==='reel'?'0:30':currentPostType==='video_long'?'5:00':null,
-    views:'0'
-  };
-  POSTS.unshift(post);
-  btn.disabled=false;
-  btn.textContent='نشر الآن ✨';
-  closePostModal();
-  renderPosts();
-  renderReels();
-  renderProfile();
+  const{data:np,error}=await db.from('posts').insert({user_id:CU.id,content:enhanced,post_type:curPT,likes_count:0,comments_count:0,views_count:0}).select().single();
+  btn.disabled=false;btn.textContent='نشر الآن ✨';
+  if(error){alert('خطأ في النشر: '+error.message);return;}
+  POSTS.unshift({...np,liked:false});closeModal();renderPosts();renderReels();renderMyPosts();
 }
-
-// Enter key support
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&document.getElementById('login-page').classList.contains('active')){
-    if(document.getElementById('form-login').classList.contains('active'))handleLogin();
-    else handleRegister();
-  }
-});
 </script>
 </body>
 </html>
